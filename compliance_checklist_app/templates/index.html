@@ -3,61 +3,231 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checklist de Compliance</title>
+  <title>GPA</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
   <nav class="navbar">
-    <div class="logo">ComplianceApp</div>
+    <div class="logo">GPA Platform</div>
     <ul class="nav-links">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Contact</a></li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/admin">Admin</a></li>
     </ul>
     <div class="search-box">
       <input type="text" placeholder="Search..." />
     </div>
   </nav>
+
   <main id="content">
     <h1>Checklist de Compliance de Dados (GDPR)</h1>
-    <form>
-      <label><input type="checkbox"> O tratamento de dados pessoais tem base legal?</label><br>
-      <label><input type="checkbox"> Consentimento foi obtido?</label><br>
-    </form>
+
+    <div class="checklist-section">
+      <h2>🧾 1. Fundamento Legal e Consentimento</h2>
+      <form id="checklist-form" action="/submit" method="post">
+        <label><input type="checkbox"> O tratamento de dados pessoais tem uma base legal clara?</label>
+        <label><input type="checkbox"> Foi obtido consentimento explícito e informado?</label>
+        <label><input type="checkbox"> Os participantes podem retirar o consentimento?</label>
+        <label><input type="checkbox"> Existe um modelo/formulário de consentimento arquivado?</label>
+
+        <h2>🔍 2. Minimização e Finalidade</h2>
+        <label><input type="checkbox"> Os dados recolhidos são estritamente necessários?</label>
+        <label><input type="checkbox"> Os dados serão usados apenas para a finalidade inicial?</label>
+        <label><input type="checkbox"> Evita-se a recolha de dados desnecessários?</label>
+
+        <h2>🔐 3. Segurança e Acesso aos Dados</h2>
+        <label><input type="checkbox"> Os dados são armazenados de forma segura?</label>
+        <label><input type="checkbox"> Existem níveis de permissão de acesso?</label>
+        <label><input type="checkbox"> O acesso é restrito à equipa do projeto?</label>
+
+        <h2>⏳ 4. Conservação dos Dados</h2>
+        <label><input type="checkbox"> Há uma política de retenção de dados?</label>
+        <label><input type="checkbox"> Há um plano para eliminar ou anonimizar os dados?</label>
+
+        <h2>🌍 5. Transferência de Dados</h2>
+        <label><input type="checkbox"> Os dados serão transferidos fora da UE?</label>
+        <label><input type="checkbox"> Existe proteção adequada no destino?</label>
+        <label><input type="checkbox"> Os participantes foram informados da transferência?</label>
+
+        <h2>👤 6. Direitos dos Titulares dos Dados</h2>
+        <label><input type="checkbox"> Os participantes podem exercer os seus direitos?</label>
+        <label><input type="checkbox"> Existe processo para responder a esses pedidos?</label>
+
+        <h2>🏛 7. Avaliação de Impacto (DPIA)</h2>
+        <label><input type="checkbox"> O projeto envolve riscos elevados?</label>
+        <label><input type="checkbox"> Foi realizada uma DPIA?</label>
+        <label><input type="checkbox"> Se não, foi documentada a decisão?</label>
+
+        <h2>📝 8. Registo e Responsabilidade</h2>
+        <label><input type="checkbox"> O projeto está registado internamente?</label>
+        <label><input type="checkbox"> Há um responsável identificado?</label>
+        <label><input type="checkbox"> Há documentação de responsabilização?</label>
+        <label><input type="checkbox"> O tratamento de dados pessoais tem uma base legal clara?</label>
+        <label><input type="checkbox"> Foi obtido consentimento explícito e informado?</label>
+        <label><input type="checkbox"> Os participantes podem retirar o consentimento?</label>
+        <label><input type="checkbox"> Existe um modelo/formulário de consentimento arquivado?</label>
+        <input type="hidden" name="respostas" id="respostas-json" />
+        
+      </form>
+    </div>
+
     <div class="nota-final">
       <h3>📌 Nota Final</h3>
-      <p>Esta checklist não substitui uma consulta ao DPO da sua instituição.</p>
-      <p>Para riscos elevados, recomenda-se realizar uma DPIA.</p>
+      <p>Esta checklist não substitui uma consulta ao Encarregado de Proteção de Dados (DPO) da sua instituição.</p>
+      <p>Para riscos elevados, recomenda-se realizar uma Avaliação de Impacto (DPIA).</p>
     </div>
-    <div class="primary" onclick="gerarPDF()">Criar PDF</div>
+
+    <button type="button" class="primary" onclick="prepareAndSubmit()">Submeter e Criar o Relatório em PDF</button>
   </main>
+
   <script>
     function gerarPDF() {
       const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageHeight = pdf.internal.pageSize.height;
+      const pageWidth = pdf.internal.pageSize.width;
+
       html2canvas(document.querySelector("#content"), { scale: 2 }).then(canvas => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        const imgHeight = canvas.height;
+        const imgWidth = canvas.width;
+        const ratio = imgWidth / imgHeight;
+        const pdfWidth = pageWidth;
+        const pdfHeight = pdfWidth / ratio;
+
         let position = 0;
-        let heightLeft = pdfHeight;
+        const imgData = canvas.toDataURL("image/png");
 
-        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-        heightLeft -= pdf.internal.pageSize.getHeight();
-
-        while (heightLeft > 0) {
-          position -= pdf.internal.pageSize.getHeight();
-          pdf.addPage();
-          pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-          heightLeft -= pdf.internal.pageSize.getHeight();
+        if (pdfHeight < pageHeight) {
+          pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        } else {
+          let remainingHeight = pdfHeight;
+          while (remainingHeight > 0) {
+            pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+            remainingHeight -= pageHeight;
+            position -= pageHeight;
+            if (remainingHeight > 0) {
+              pdf.addPage();
+            }
+          }
         }
 
         pdf.save("relatorio-checklist.pdf");
       });
     }
+
+    document.getElementById("checklist-form").addEventListener("submit", function(e) {
+      const respostas = [];
+      document.querySelectorAll("form input[type=checkbox]").forEach(cb => {
+        respostas.push({ pergunta: cb.parentElement.textContent.trim(), checked: cb.checked });
+      });
+      document.getElementById("respostas-json").value = JSON.stringify(respostas);
+    });
   </script>
+
+<script>
+function prepare() {
+  const { jsPDF } = window.jspdf;
+  const respostas = [];
+  document.querySelectorAll("form label").forEach(label => {
+    const cb = label.querySelector("input");
+    if (cb) respostas.push({ pergunta: label.textContent.trim(), checked: cb.checked });
+  });
+  document.getElementById("respostas-json").value = JSON.stringify(respostas);
+
+  html2canvas(document.querySelector("#content")).then(canvas => {
+    const pdf = new jsPDF();
+    const img = canvas.toDataURL("image/png");
+    pdf.addImage(img, "PNG", 0, 0, 210, 0);
+    const pdfOutput = pdf.output("arraybuffer");
+    const hex = Array.from(new Uint8Array(pdfOutput)).map(b => b.toString(16).padStart(2, "0")).join("");
+    document.getElementById("pdfdata").value = hex;
+  });
+}
+</script>
+
+
+<script>
+  async function prepareAndSubmit() {
+    const { jsPDF } = window.jspdf;
+
+    const respostas = [];
+    document.querySelectorAll("#checklist-form label").forEach(label => {
+      const cb = label.querySelector("input");
+      if (cb) {
+        respostas.push({ pergunta: label.textContent.trim(), checked: cb.checked });
+      }
+    });
+    document.getElementById("respostas-json").value = JSON.stringify(respostas);
+
+    const canvas = await html2canvas(document.querySelector("#content"));
+    const pdf = new jsPDF("p", "mm", "a4");
+    const img = canvas.toDataURL("image/png");
+    const imgProps = pdf.getImageProperties(img);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    if (pdfHeight < pdf.internal.pageSize.getHeight()) {
+      pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
+    } else {
+      let heightLeft = pdfHeight;
+      let position = 0;
+      while (heightLeft > 0) {
+        pdf.addImage(img, "PNG", 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pdf.internal.pageSize.getHeight();
+        position -= pdf.internal.pageSize.getHeight();
+        if (heightLeft > 0) pdf.addPage();
+      }
+    }
+
+    // Criar PDF como base64 e injetar no formulário
+    document.getElementById("pdfdata").value = pdf.output("datauristring");
+
+    // Submeter o formulário manualmente
+    document.getElementById("checklist-form").submit();
+  }
+</script>
+
+<script>
+  async function prepareAndSubmit() {
+    const { jsPDF } = window.jspdf;
+
+    const respostas = [];
+    document.querySelectorAll("#checklist-form label").forEach(label => {
+      const cb = label.querySelector("input");
+      if (cb) {
+        respostas.push({ pergunta: label.textContent.trim(), checked: cb.checked });
+      }
+    });
+    document.getElementById("respostas-json").value = JSON.stringify(respostas);
+
+    const canvas = await html2canvas(document.querySelector("#content"));
+    const pdf = new jsPDF("p", "mm", "a4");
+    const img = canvas.toDataURL("image/png");
+    const imgProps = pdf.getImageProperties(img);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    if (pdfHeight < pdf.internal.pageSize.getHeight()) {
+      pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
+    } else {
+      let heightLeft = pdfHeight;
+      let position = 0;
+      while (heightLeft > 0) {
+        pdf.addImage(img, "PNG", 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pdf.internal.pageSize.getHeight();
+        position -= pdf.internal.pageSize.getHeight();
+        if (heightLeft > 0) pdf.addPage();
+      }
+    }
+
+    // Força o download local
+    pdf.save("relatorio-checklist.pdf");
+
+    // Aguarda 500ms e submete o formulário
+    setTimeout(() => {
+      document.getElementById("checklist-form").submit();
+    }, 500);
+  }
+</script>
 </body>
-</html>

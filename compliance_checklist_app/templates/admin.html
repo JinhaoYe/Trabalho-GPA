@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head><meta charset="UTF-8"><title>Admin Dashboard</title></head>
+<body>
+  <h2>Respostas Submetidas</h2>
+  {% for resposta in respostas %}
+    <div style="margin-bottom:20px;">
+      {% for item in resposta %}
+        <p>{{ "✔️" if item.checked else "❌" }} {{ item.pergunta }}</p>
+      {% endfor %}
+      <hr/>
+    </div>
+  {% endfor %}
+</body>
+</html>
