@@ -10,7 +10,7 @@
 </head>
 <body>
   <nav class="navbar">
-    <div class="logo">GPA Platform</div>
+    <div class="logo">Gestão de Projetos Ágeis - Technology Ethics</div>
     <ul class="nav-links">
       <li><a href="/">Home</a></li>
       <li><a href="/admin">Admin</a></li>
@@ -21,45 +21,45 @@
   </nav>
 
   <main id="content">
-    <h1>Checklist de Compliance de Dados (GDPR)</h1>
+    <h1>Checklist de Compliance de Dados (RGPD)</h1>
 
     <div class="checklist-section">
-      <h2>🧾 1. Fundamento Legal e Consentimento</h2>
       <form id="checklist-form" action="/submit" method="post">
+        <h2> 1. Fundamento Legal e Consentimento</h2>
         <label><input type="checkbox"> O tratamento de dados pessoais tem uma base legal clara?</label>
         <label><input type="checkbox"> Foi obtido consentimento explícito e informado?</label>
         <label><input type="checkbox"> Os participantes podem retirar o consentimento?</label>
         <label><input type="checkbox"> Existe um modelo/formulário de consentimento arquivado?</label>
 
-        <h2>🔍 2. Minimização e Finalidade</h2>
+        <h2> 2. Minimização e Finalidade</h2>
         <label><input type="checkbox"> Os dados recolhidos são estritamente necessários?</label>
         <label><input type="checkbox"> Os dados serão usados apenas para a finalidade inicial?</label>
         <label><input type="checkbox"> Evita-se a recolha de dados desnecessários?</label>
 
-        <h2>🔐 3. Segurança e Acesso aos Dados</h2>
+        <h2> 3. Segurança e Acesso aos Dados</h2>
         <label><input type="checkbox"> Os dados são armazenados de forma segura?</label>
         <label><input type="checkbox"> Existem níveis de permissão de acesso?</label>
         <label><input type="checkbox"> O acesso é restrito à equipa do projeto?</label>
 
-        <h2>⏳ 4. Conservação dos Dados</h2>
+        <h2> 4. Conservação dos Dados</h2>
         <label><input type="checkbox"> Há uma política de retenção de dados?</label>
         <label><input type="checkbox"> Há um plano para eliminar ou anonimizar os dados?</label>
 
-        <h2>🌍 5. Transferência de Dados</h2>
+        <h2> 5. Transferência de Dados</h2>
         <label><input type="checkbox"> Os dados serão transferidos fora da UE?</label>
         <label><input type="checkbox"> Existe proteção adequada no destino?</label>
         <label><input type="checkbox"> Os participantes foram informados da transferência?</label>
 
-        <h2>👤 6. Direitos dos Titulares dos Dados</h2>
+        <h2> 6. Direitos dos Titulares dos Dados</h2>
         <label><input type="checkbox"> Os participantes podem exercer os seus direitos?</label>
         <label><input type="checkbox"> Existe processo para responder a esses pedidos?</label>
 
-        <h2>🏛 7. Avaliação de Impacto (DPIA)</h2>
+        <h2> 7. Avaliação de Impacto (DPIA)</h2>
         <label><input type="checkbox"> O projeto envolve riscos elevados?</label>
         <label><input type="checkbox"> Foi realizada uma DPIA?</label>
         <label><input type="checkbox"> Se não, foi documentada a decisão?</label>
 
-        <h2>📝 8. Registo e Responsabilidade</h2>
+        <h2> 8. Registo e Responsabilidade</h2>
         <label><input type="checkbox"> O projeto está registado internamente?</label>
         <label><input type="checkbox"> Há um responsável identificado?</label>
         <label><input type="checkbox"> Há documentação de responsabilização?</label>
@@ -70,12 +70,6 @@
         <input type="hidden" name="respostas" id="respostas-json" />
         
       </form>
-    </div>
-
-    <div class="nota-final">
-      <h3>📌 Nota Final</h3>
-      <p>Esta checklist não substitui uma consulta ao Encarregado de Proteção de Dados (DPO) da sua instituição.</p>
-      <p>Para riscos elevados, recomenda-se realizar uma Avaliação de Impacto (DPIA).</p>
     </div>
 
     <button type="button" class="primary" onclick="prepareAndSubmit()">Submeter e Criar o Relatório em PDF</button>
