@@ -1,0 +1,1 @@
+from compliance_checklist_app.app import app
