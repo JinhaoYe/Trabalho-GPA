@@ -20,100 +20,41 @@
       <input type="text" placeholder="Search..." />
     </div>
   </nav>
-
   <main id="content">
     <h1>Checklist de Compliance de Dados (GDPR)</h1>
-
-    <div class="checklist-section">
-      <h2>🧾 1. Fundamento Legal e Consentimento</h2>
-      <form>
-        <label><input type="checkbox"> O tratamento de dados pessoais tem uma base legal clara?</label>
-        <label><input type="checkbox"> Foi obtido consentimento explícito e informado?</label>
-        <label><input type="checkbox"> Os participantes podem retirar o consentimento?</label>
-        <label><input type="checkbox"> Existe um modelo/formulário de consentimento arquivado?</label>
-      </form>
-    </div>
-
-    <div class="checklist-section">
-      <h2>🔍 2. Minimização e Finalidade</h2>
-      <form>
-        <label><input type="checkbox"> Os dados recolhidos são estritamente necessários?</label>
-        <label><input type="checkbox"> Os dados serão usados apenas para a finalidade inicial?</label>
-        <label><input type="checkbox"> Evita-se a recolha de dados desnecessários?</label>
-      </form>
-    </div>
-
-    <div class="checklist-section">
-      <h2>🔐 3. Segurança e Acesso aos Dados</h2>
-      <form>
-        <label><input type="checkbox"> Os dados são armazenados de forma segura?</label>
-        <label><input type="checkbox"> Existem níveis de permissão de acesso?</label>
-        <label><input type="checkbox"> O acesso é restrito à equipa do projeto?</label>
-      </form>
-    </div>
-
-    <div class="checklist-section">
-      <h2>⏳ 4. Conservação dos Dados</h2>
-      <form>
-        <label><input type="checkbox"> Há uma política de retenção de dados?</label>
-        <label><input type="checkbox"> Há um plano para eliminar ou anonimizar os dados?</label>
-      </form>
-    </div>
-
-    <div class="checklist-section">
-      <h2>🌍 5. Transferência de Dados</h2>
-      <form>
-        <label><input type="checkbox"> Os dados serão transferidos fora da UE?</label>
-        <label><input type="checkbox"> Existe proteção adequada no destino?</label>
-        <label><input type="checkbox"> Os participantes foram informados da transferência?</label>
-      </form>
-    </div>
-
-    <div class="checklist-section">
-      <h2>👤 6. Direitos dos Titulares dos Dados</h2>
-      <form>
-        <label><input type="checkbox"> Os participantes podem exercer os seus direitos?</label>
-        <label><input type="checkbox"> Existe processo para responder a esses pedidos?</label>
-      </form>
-    </div>
-
-    <div class="checklist-section">
-      <h2>🏛 7. Avaliação de Impacto (DPIA)</h2>
-      <form>
-        <label><input type="checkbox"> O projeto envolve riscos elevados?</label>
-        <label><input type="checkbox"> Foi realizada uma DPIA?</label>
-        <label><input type="checkbox"> Se não, foi documentada a decisão?</label>
-      </form>
-    </div>
-
-    <div class="checklist-section">
-      <h2>📝 8. Registo e Responsabilidade</h2>
-      <form>
-        <label><input type="checkbox"> O projeto está registado internamente?</label>
-        <label><input type="checkbox"> Há um responsável identificado?</label>
-        <label><input type="checkbox"> Há documentação de responsabilização?</label>
-      </form>
-    </div>
-
+    <form>
+      <label><input type="checkbox"> O tratamento de dados pessoais tem base legal?</label><br>
+      <label><input type="checkbox"> Consentimento foi obtido?</label><br>
+    </form>
     <div class="nota-final">
       <h3>📌 Nota Final</h3>
-      <p>Esta checklist não substitui uma consulta ao Encarregado de Proteção de Dados (DPO) da sua instituição.</p>
-      <p>Para riscos elevados, recomenda-se realizar uma Avaliação de Impacto (DPIA).</p>
+      <p>Esta checklist não substitui uma consulta ao DPO da sua instituição.</p>
+      <p>Para riscos elevados, recomenda-se realizar uma DPIA.</p>
     </div>
-
-    <div class="primary" onclick="gerarPDF()">Criar o Relatório em PDF</div>
+    <div class="primary" onclick="gerarPDF()">Criar PDF</div>
   </main>
-
   <script>
     function gerarPDF() {
       const { jsPDF } = window.jspdf;
-      html2canvas(document.querySelector("#content")).then(canvas => {
+      html2canvas(document.querySelector("#content"), { scale: 2 }).then(canvas => {
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF("p", "mm", "a4");
         const imgProps = pdf.getImageProperties(imgData);
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        let position = 0;
+        let heightLeft = pdfHeight;
+
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pdf.internal.pageSize.getHeight();
+
+        while (heightLeft > 0) {
+          position -= pdf.internal.pageSize.getHeight();
+          pdf.addPage();
+          pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+          heightLeft -= pdf.internal.pageSize.getHeight();
+        }
+
         pdf.save("relatorio-checklist.pdf");
       });
     }
